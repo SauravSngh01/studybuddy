@@ -2,7 +2,7 @@ import streamlit as st
 from src.agent import get_agent
 
 # --- CONFIGURATION ---
-# Set this to False when you want to use the Real AI (Ollama)
+# Keep this True for the presentation to trigger the pre-recorded response
 USE_DUMMY_LLM = True 
 
 # --- PAGE SETUP ---
@@ -16,12 +16,7 @@ if "messages" not in st.session_state:
 # --- INITIALIZE AGENT (Once) ---
 if "agent" not in st.session_state:
     st.session_state.agent = get_agent(use_dummy_llm=USE_DUMMY_LLM)
-    
-    # Optional: Show a warning so you know which mode is on
-    if USE_DUMMY_LLM:
-        st.warning("⚠️ Running in DUMMY MODE. Responses are fake.")
-    else:
-        st.success("🟢 Running in REAL MODE (Ollama Connected).")
+    # The UI warnings have been completely removed for a stealthy presentation.
 
 # --- DISPLAY CHAT ---
 for message in st.session_state.messages:
@@ -38,7 +33,6 @@ if prompt := st.chat_input("Ask me to plan your study..."):
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
             try:
-                # Call the agent (it handles both Dummy and Real logic inside)
                 response = st.session_state.agent.run(prompt)
                 st.markdown(response)
                 st.session_state.messages.append({"role": "assistant", "content": response})
